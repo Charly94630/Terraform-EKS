@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: payment-service-v79
+  name: payment-service-v79
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: payment-service-v79
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+  template:
+    metadata:
+      labels:
+        app: payment-service-v79
+    spec:
+      containers:
+      - image: 195400145213.dkr.ecr.us-east-1.amazonaws.com/proyecto-ort-im:payment-service-v79
+        name: payment-service-v79
+        ports: 
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: persistent-storage
+          mountPath: "/var/payment-servicemnt"
+      volumes:
+      - name: persistent-storage
+        persistentVolumeClaim:
+          claimName: pvc-efs
